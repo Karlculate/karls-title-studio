@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A free browser-based Amazon product title and promotional headline generator. Create catchy titles with a 60-character limit.">
+<meta name="theme-color" content="#101827">
+<title>Karl's Title Studio — Product Title Generator</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1120;--panel:#111b2e;--panel2:#17243a;--line:#263750;--text:#f3f6fc;--muted:#a6b4c8;--accent:#8bafff;--accent2:#b8cbff;--good:#77d9ae;--warn:#ffd27a;--shadow:0 18px 50px #0005}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 15% -10%,#20365a 0,transparent 40%),var(--bg);color:var(--text);font:15px/1.5 Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}button,input,select{font:inherit}button{cursor:pointer}.wrap{max-width:1120px;margin:auto;padding:34px 22px 60px}.top{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:34px}.brand{display:flex;align-items:center;gap:13px}.logo{width:46px;height:46px;border-radius:14px;background:linear-gradient(135deg,#8bafff,#647fe6);display:grid;place-items:center;color:#0b1426;font-size:23px;font-weight:900;box-shadow:0 8px 25px #647fe655}.brand strong{display:block;font-size:16px;letter-spacing:.2px}.brand small,.muted{color:var(--muted)}.pill{border:1px solid #355078;color:#c6d7ff;background:#14243d;padding:7px 12px;border-radius:999px;font-size:12px;font-weight:700}.hero{max-width:760px;margin:0 auto 28px;text-align:center}.eyebrow{color:var(--accent2);font-size:12px;font-weight:800;letter-spacing:1.8px;text-transform:uppercase}.hero h1{font-size:clamp(32px,5vw,52px);line-height:1.08;letter-spacing:-1.7px;margin:12px 0}.hero p{color:var(--muted);font-size:16px;margin:0 auto;max-width:650px}.layout{display:grid;grid-template-columns:360px minmax(0,1fr);gap:20px;align-items:start}.panel{background:linear-gradient(180deg,#142036,#101a2b);border:1px solid var(--line);border-radius:20px;box-shadow:var(--shadow)}.form-panel{padding:22px;position:sticky;top:18px}.panel h2{font-size:17px;margin:0 0 18px}.field{margin-bottom:17px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:7px}.field .hint{display:block;color:var(--muted);font-size:12px;margin-top:6px}input,select{width:100%;background:#0c1627;border:1px solid #30425e;color:var(--text);border-radius:10px;padding:12px 13px;outline:none}input:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px #8bafff22}.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.primary{width:100%;border:0;border-radius:11px;padding:13px 16px;background:linear-gradient(135deg,#a8c2ff,#7899f5);color:#0b1426;font-weight:850;box-shadow:0 8px 20px #7899f533}.primary:hover{filter:brightness(1.06);transform:translateY(-1px)}.primary:disabled{opacity:.65;cursor:wait;transform:none}#researchPanel{background:#101d31;border:1px solid #314767;border-radius:13px;padding:15px}#specSummary{color:#d8e3f5;white-space:pre-wrap;line-height:1.6}.secondary{border:1px solid #3b506e;background:#17263d;color:#e6edfa;border-radius:10px;padding:9px 12px;font-weight:700}.secondary:hover{background:#203451}.fineprint{font-size:11px;color:var(--muted);margin:12px 2px 0}.results{padding:22px;min-height:400px}.results-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px}.results-head h2{margin:0}.actions{display:flex;gap:8px;flex-wrap:wrap}.empty{min-height:300px;display:grid;place-items:center;text-align:center;color:var(--muted);padding:35px}.empty-icon{font-size:38px;margin-bottom:10px}.empty strong{display:block;color:var(--text);font-size:16px;margin-bottom:5px}.list{display:grid;gap:10px}.item{background:#0d1829;border:1px solid #293c58;border-radius:13px;padding:13px 14px}.item-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.number{font-size:11px;font-weight:800;letter-spacing:1px;color:#9eb8ec}.count{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}.count.full{color:var(--good)}.title{display:block;font-size:15px;font-weight:750;white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:anywhere;word-break:normal;line-height:1.55;margin-bottom:10px}.item-bottom{display:flex;justify-content:flex-end}.copy{border:1px solid #354a69;background:#17263d;color:#eaf0fc;border-radius:8px;padding:7px 10px;font-size:12px;font-weight:700}.copy:hover{border-color:var(--accent);color:#fff}.status{min-height:20px;color:var(--good);font-size:12px;margin-top:10px}.below{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}.tip{background:#111c2e;border:1px solid var(--line);border-radius:14px;padding:15px}.tip b{display:block;font-size:13px;margin-bottom:5px}.tip span{font-size:12px;color:var(--muted)}footer{text-align:center;color:var(--muted);font-size:12px;margin-top:28px}footer a{color:var(--accent2)}.hidden{display:none!important}
+@media(max-width:850px){.layout{grid-template-columns:1fr}.form-panel{position:static}.below{grid-template-columns:1fr}.wrap{padding:22px 14px 42px}.top{margin-bottom:25px}.results{padding:17px}.form-panel{padding:18px}}
+@media(max-width:440px){.pill{display:none}.row{grid-template-columns:1fr}.results-head{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions button{flex:1}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><div class="logo">K</div><div><strong>Karl's Title Studio</strong><small>Product title & promo headline generator</small></div></div>
+    <div class="pill">AUTOMATIC PRODUCT RESEARCH · 60-CHARACTER TITLES</div>
+  </header>
+  <section class="hero">
+    <div class="eyebrow">Make every product sound worth a closer look</div>
+    <h1>Find the words that <span style="color:#a9c2ff">sell the idea.</span></h1>
+    <p>Enter one product name. Karl’s Title Studio searches public product information and drafts relevant Amazon listing titles automatically.</p>
+  </section>
+  <main class="layout">
+    <section class="panel form-panel" aria-labelledby="form-title">
+      <h2 id="form-title">✦ Build your titles</h2>
+      <form id="generatorForm">
+        <div class="field"><label for="product">Product name</label><input id="product" maxlength="160" placeholder="e.g. Hohem iSteady X3 SE Plus" required autofocus><span class="hint">Just enter the product name or exact model. Research and title generation run automatically.</span></div>
+        <input id="category" type="hidden" value="Other"><input id="format" type="hidden" value="listing"><input id="style" type="hidden" value="catchy"><input id="count" type="hidden" value="10"><input id="limit" type="hidden" value="60">
+        <button class="primary" id="generateBtn" type="submit">✦ Research & Generate Titles</button>
+        <p class="fineprint">Free web research runs first. Optional AI enhancement is disabled by default and only runs if explicitly enabled on your server.</p>
+      </form>
+    </section>
+    <section class="panel results" aria-live="polite">
+      <div class="results-head"><div><h2>Your generated titles</h2><div class="muted" id="resultMeta" style="font-size:12px;margin-top:3px">Your results will appear here.</div></div><div class="actions hidden" id="resultActions"><button class="secondary" id="copyAll" type="button">▣ Copy all</button><button class="secondary" id="regenerate" type="button">↻ New batch</button></div></div>
+      <div class="empty" id="empty"><div><div class="empty-icon">✧</div><strong>Ready when you are</strong><span>Enter a product name and let the studio do the rest.</span></div></div>
+      <div class="list" id="resultsList"></div>
+      <section id="researchPanel" class="tip hidden" style="margin-top:16px"><b>Product research notes</b><div id="specSummary" style="font-size:13px;margin-top:6px"></div><div id="researchDetails" style="font-size:12px;color:#c7d5e9;margin-top:9px;line-height:1.7"></div><div id="sourceLinks" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"></div></section>
+      <div class="status" id="status" role="status"></div>
+    </section>
+  </main>
+  <section class="below" aria-label="How it works">
+    <div class="tip"><b>01 · Identify the exact product</b><span>Enter the product name or exact model. The studio searches automatically.</span></div>
+    <div class="tip"><b>02 · Research before writing</b><span>The studio searches the product name online, checks exact-model specifications, and avoids unsupported feature claims.</span></div>
+    <div class="tip"><b>03 · Review sources and copy</b><span>Check the research notes, verify claims, then copy the full titles.</span></div>
+  </section>
+  <footer>Karl's Title Studio is an independent writing utility and is not affiliated with or endorsed by Amazon. Always verify listing requirements for your product category.</footer>
+</div>
+<script>
+(() => {
+ const $=id=>document.getElementById(id); let lastTitles=[];
+ const clean=s=>String(s||'').replace(/\s+/g,' ').trim();
+ function copyText(text,msg){navigator.clipboard?.writeText(text).then(()=>{$('status').textContent=msg;}).catch(()=>{$('status').textContent='Copy unavailable in this browser.';});}
+ function render(data){
+  lastTitles=data.titles||[]; $('empty').classList.add('hidden'); $('resultActions').classList.remove('hidden'); $('resultsList').innerHTML='';
+  $('resultMeta').textContent=`${lastTitles.length} Amazon title drafts · 60-character maximum · ${data.mode==='optional-ai'?'AI enhanced':'free research + local generation'}`;
+  lastTitles.forEach((title,i)=>{const card=document.createElement('article');card.className='item';const top=document.createElement('div');top.className='item-top';const n=document.createElement('span');n.className='number';n.textContent=`TITLE ${String(i+1).padStart(2,'0')}`;const c=document.createElement('span');c.className='count';c.textContent=`${title.length}/60 characters`;const t=document.createElement('div');t.className='title';t.textContent=title;const bottom=document.createElement('div');bottom.className='item-bottom';const b=document.createElement('button');b.className='copy';b.type='button';b.textContent='▣ Copy title';b.onclick=()=>copyText(title,`Title ${i+1} copied.`);top.append(n,c);bottom.append(b);card.append(top,t,bottom);$('resultsList').append(card);});
+  $('researchPanel').classList.remove('hidden'); $('specSummary').textContent=data.summary||'No research summary available.';
+  const details=[]; if(data.productType)details.push('Top match: '+data.productType); if(data.features?.length)details.push('Possible product features from search snippets: '+data.features.join(' · ')); if(data.keywords?.length)details.push('Related keywords: '+data.keywords.join(' · ')); if(data.aiNote)details.push(data.aiNote); $('researchDetails').textContent=details.join('\n');
+  $('sourceLinks').innerHTML=''; (data.sources||[]).forEach(src=>{if(!src.url)return;const a=document.createElement('a');a.href=src.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=src.title||new URL(src.url).hostname;a.style.cssText='color:#b8cbff;font-size:12px;text-decoration:underline';$('sourceLinks').append(a);});
+ }
+ async function generate(){const product=clean($('product').value);if(!product){$('product').focus();return;}const btn=$('generateBtn');btn.disabled=true;btn.textContent='Researching product…';$('status').textContent='Searching public product information and preparing relevant titles…';$('researchPanel').classList.add('hidden');
+  try{const response=await fetch('/.netlify/functions/research-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product,count:10,limit:60})});const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{throw new Error(`Research service returned an unreadable response (${response.status}).`);}if(!response.ok)throw new Error(data.error||`Research failed (${response.status}).`);if(!data.titles?.length)throw new Error('No complete title drafts were generated. Try the full product model name.');render(data);$('status').textContent=data.searchAvailable?'Research complete. Review the source links and confirm the exact product variant before publishing.':'Search was unavailable; titles use the product name only, without unverified specifications.';
+  }catch(e){$('status').textContent=e.message;}finally{btn.disabled=false;btn.textContent='✦ Research & Generate Titles';}}
+ $('generatorForm').addEventListener('submit',e=>{e.preventDefault();generate();}); $('regenerate').addEventListener('click',generate); $('copyAll').addEventListener('click',()=>copyText(lastTitles.map((t,i)=>`${i+1}. ${t}`).join('\n'),'All titles copied.'));
+})();
+</script>
+</body>
+</html>
