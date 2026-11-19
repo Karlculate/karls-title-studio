@@ -26,13 +26,13 @@
 <body>
 <div class="wrap">
   <header class="top">
-    <div class="brand"><div class="logo">K</div><div><strong>Karl's Title Studio</strong><small>Promotional headlines, taglines & Amazon listing titles</small></div></div>
+    <div class="brand"><div class="logo">K</div><div><strong>Karl's Title Studio</strong><small>Catchy product titles that make people look twice</small></div></div>
     <div class="pill">AUTOMATIC PRODUCT RESEARCH · 60-CHARACTER TITLES</div>
   </header>
   <section class="hero">
     <div class="eyebrow">Make every product sound worth a closer look</div>
     <h1>Find the words that <span style="color:#a9c2ff">sell the idea.</span></h1>
-    <p>Enter one product name. Karl’s Title Studio researches the product and creates persuasive promotional headlines, taglines and an SEO-friendly Amazon listing title.</p>
+    <p>Enter a product name. Get a list of catchy, product-specific titles based on researched features.</p>
   </section>
   <main class="layout">
     <section class="panel form-panel" aria-labelledby="form-title">
@@ -40,16 +40,14 @@
       <form id="generatorForm">
         <div class="field"><label for="product">Product name</label><input id="product" maxlength="160" placeholder="e.g. Hohem iSteady X3 SE Plus" required autofocus><span class="hint">Just enter the product name or exact model. Research and title generation run automatically.</span></div>
         <input id="category" type="hidden" value="Other"><input id="format" type="hidden" value="listing"><input id="style" type="hidden" value="catchy"><input id="count" type="hidden" value="10"><input id="limit" type="hidden" value="60">
-        <button class="primary" id="generateBtn" type="submit">✦ Research & Create Marketing Copy</button>
+        <button class="primary" id="generateBtn" type="submit">✦ Research & Generate Titles</button>
         <p class="fineprint">Free web research runs first. Optional AI enhancement is disabled by default and only runs if explicitly enabled on your server.</p>
       </form>
     </section>
     <section class="panel results" aria-live="polite">
       <div class="results-head"><div><h2>Your Titles</h2><div class="muted" id="resultMeta" style="font-size:12px;margin-top:3px"></div></div><div class="actions hidden" id="resultActions"><button class="secondary" id="copyAll" type="button">▣ Copy all</button><button class="secondary" id="regenerate" type="button">↻ New batch</button></div></div>
-      <div class="empty" id="empty"><div><div class="empty-icon">✧</div><strong>Ready when you are</strong><span>Enter a product name and let the studio research it and create marketing copy.</span></div></div>
-      <section class="output-group hidden" id="promoGroup"><h3>Promotional Headlines</h3><div class="list" id="promoList"></div></section>
-      <section class="output-group hidden" id="taglineGroup"><h3>Taglines</h3><div class="list" id="taglineList"></div></section>
-      <section class="output-group hidden" id="listingGroup"><h3>Amazon Listing Title</h3><div class="list" id="listingList"></div></section>
+      <div class="empty" id="empty"><div><div class="empty-icon">✧</div><strong>Ready when you are</strong><span>Enter a product name to generate catchy title ideas.</span></div></div>
+      <section class="output-group hidden" id="titlesGroup"><div class="list" id="titlesList"></div></section>
       <div class="status" id="status" role="status"></div>
     </section>
   </main>
@@ -65,16 +63,16 @@
   (items||[]).forEach((value,i)=>{const text=clean(value);const card=document.createElement('article');card.className='item compact-item';const t=document.createElement('div');t.className='title';t.textContent=text;const btn=document.createElement('button');btn.className='copy compact-copy';btn.type='button';btn.setAttribute('aria-label',`Copy ${label.toLowerCase()} ${i+1}`);btn.textContent='Copy';btn.onclick=()=>copyText(text,`${label} ${i+1} copied.`);card.append(t,btn);root.append(card);});
  }
  function render(data){
-  const promos=data.promotionalHeadlines||[], tags=data.taglines||[], listings=data.listingTitles||data.titles||[];
+  const titles=data.titles||[];
   $('empty').classList.add('hidden'); $('resultActions').classList.remove('hidden');
-  $('resultMeta').textContent=`${promos.length} promotional headlines · ${tags.length} taglines · ${listings.length} Amazon listing titles`;
-  [['promoGroup','promoList',promos,'HEADLINE'],['taglineGroup','taglineList',tags,'TAGLINE'],['listingGroup','listingList',listings,'LISTING']].forEach(([group,list,items,label])=>{$(group).classList.toggle('hidden',!items.length);renderItems(list,items,label,label==='LISTING'?60:null);});
-  lastTitles=[...promos,...tags,...listings];
-  // Research runs in the background; keep the results view focused on the copy.
+  $('resultMeta').textContent=`${titles.length} title ideas`;
+  $('titlesGroup').classList.toggle('hidden',!titles.length);
+  renderItems('titlesList',titles,'TITLE');
+  lastTitles=titles;
  }
  async function generate(){const product=clean($('product').value);if(!product){$('product').focus();return;}const btn=$('generateBtn');btn.disabled=true;btn.textContent='Researching product…';$('status').textContent='Researching product and writing copy…';
-  try{const response=await fetch('/.netlify/functions/research-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product,count:10,limit:60})});const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{throw new Error(`Research service returned an unreadable response (${response.status}).`);}if(!response.ok)throw new Error(data.error||`Research failed (${response.status}).`);if(!data.promotionalHeadlines?.length && !data.taglines?.length && !data.listingTitles?.length && !data.titles?.length)throw new Error('The research service returned no marketing copy. Check the Netlify Function deployment and try again.');render(data);$('status').textContent=data.searchAvailable?'Done. Review the copy before publishing.':'Done. Some product details may need manual verification.';
-  }catch(e){$('status').textContent=`Unable to generate copy: ${e?.message||'Unexpected error.'}`;}finally{btn.disabled=false;btn.textContent='✦ Research & Create Marketing Copy';}}
+  try{const response=await fetch('/.netlify/functions/research-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product,count:10,limit:60})});const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{throw new Error(`Research service returned an unreadable response (${response.status}).`);}if(!response.ok)throw new Error(data.error||`Research failed (${response.status}).`);if(!data.titles?.length)throw new Error('The research service returned no marketing copy. Check the Netlify Function deployment and try again.');render(data);$('status').textContent=data.searchAvailable?'Done. Review the copy before publishing.':'Done. Some product details may need manual verification.';
+  }catch(e){$('status').textContent=`Unable to generate copy: ${e?.message||'Unexpected error.'}`;}finally{btn.disabled=false;btn.textContent='✦ Research & Generate Titles';}}
  $('generatorForm').addEventListener('submit',e=>{e.preventDefault();generate();}); $('regenerate').addEventListener('click',generate); $('copyAll').addEventListener('click',()=>copyText(lastTitles.map((t,i)=>`${i+1}. ${t}`).join('\n'),'All titles copied.'));
 })();
 </script>

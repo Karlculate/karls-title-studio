@@ -78,8 +78,8 @@ function deriveFeatures(results, product) {
   const corpus = results.map(r => `${r.title}. ${r.snippet}`).join(' ');
   const phrases = [];
   const patterns = [
-    /\b(USB[- ]?C|Bluetooth\s*[\d.]*|Wi[- ]?Fi\s*[\d.]*|4K|1080p|5G|2\.4GHz|wireless|cordless|rechargeable|waterproof|water resistant|noise cancelling|noise-cancelling|foldable|portable|reusable|stainless steel|ceramic|silicone|LED|touchscreen|adjustable|heated|magnetic|hands[- ]free|multi[- ]purpose|ergonomic|dishwasher safe|BPA[- ]free|AI tracking|object tracking|face tracking|3-axis|three-axis|gimbal stabilization|stabilization)\b/gi,
-    /\b(\d+(?:\.\d+)?\s?(?:W| watt| watts|mAh|Ah|V| volt| volts| inch| inches| mm| cm| ml| L| oz| lb| lbs| hours?| hrs?| speeds?| settings?| modes?| kg| g))\b/gi
+    /\b(USB[- ]?C|Bluetooth\s*[\d.]*|Wi[- ]?Fi\s*[\d.]*|4K|1080p|5G|2\.4GHz|4[- ]in[- ]1|multi[- ]beam|UV|green beam|kinetic|sand art|zen|stress relief|wireless|cordless|rechargeable|waterproof|water resistant|noise cancelling|noise-cancelling|foldable|portable|reusable|stainless steel|ceramic|silicone|LED|touchscreen|adjustable|heated|magnetic|hands[- ]free|multi[- ]purpose|ergonomic|dishwasher safe|BPA[- ]free|AI tracking|object tracking|face tracking|3-axis|three-axis|gimbal stabilization|stabilization)\b/gi,
+    /\b(\d+(?:\.\d+)?\s?(?:lumens?|lm|W| watt| watts|mAh|Ah|V| volt| volts| inch| inches| mm| cm| ml| L| oz| lb| lbs| hours?| hrs?| speeds?| settings?| modes?| kg| g))\b/gi
   ];
   for (const p of patterns) for (const m of corpus.matchAll(p)) { const v = clean(m[0]); if (!phrases.some(x => x.toLowerCase() === v.toLowerCase())) phrases.push(v); }
   const stop = new Set(['product','official','features','specifications','specification','review','reviews','amazon','buy','price','model','best','with','from','this','that','your','more','about','into','the','and','for','new','all']);
@@ -89,58 +89,73 @@ function deriveFeatures(results, product) {
   return { features: phrases.slice(0,10), keywords: keyword };
 }
 function localMarketing(product, features, keywords) {
-  const f = features.slice(0,3);
-  const feature = f[0] || '';
-  const promos = [
-    `Make Every ${keywords[0] || 'Moment'} Count`,
-    `Bring More Possibility to Every Day`,
-    `A Smarter Way to Enjoy ${product}`,
-    `Designed to Fit the Way You Live`,
-    `Make Your Everyday Routine Feel Easier`,
-    `Small Upgrade. Fresh Everyday Potential.`,
-    `Get More From the Things You Love`,
-    `A Practical Pick for Everyday Living`,
-    `Ready for Whatever the Day Brings`,
-    `Give Your Daily Routine a Better Feel`
-  ];
-  if (feature) {
-    promos[0] = `Enjoy More with ${feature}`;
-    promos[1] = `${feature} for the Way You Live`;
-    promos[2] = `Discover What ${feature} Can Do`;
+  const f = features.map(clean);
+  const lower = product.toLowerCase();
+  const category = /flashlight|torch/.test(lower) ? 'Flashlight'
+    : /sand art/.test(lower) ? 'Sand Art Table'
+    : /gimbal|stabilizer/.test(lower) ? 'Gimbal'
+    : /headphone|earbud/.test(lower) ? 'Audio Essential'
+    : /wallet/.test(lower) ? 'Wallet'
+    : /camera/.test(lower) ? 'Camera'
+    : /watch/.test(lower) ? 'Watch'
+    : /table/.test(lower) ? 'Table'
+    : /comb|straightener/.test(lower) ? 'Styling Tool'
+    : (product.split(/\s+/).slice(-1)[0] || 'Product').replace(/[^\w-]/g,'');
+  const brandModel = product;
+  const feature = f.find(x => /\d/.test(x)) || f[0] || '';
+  const has = x => f.some(v=>v.toLowerCase().includes(x));
+  const titles = [];
+  const add = t => { t=clean(t).replace(/\s+([!?.])/g,'$1'); if(t && !titles.some(x=>x.toLowerCase()===t.toLowerCase())) titles.push(t); };
+  if (feature) add(`${feature} of Power in Your Pocket!`);
+  if (has('4-in-1') || /4-in-1/.test(lower)) add(`The Ultimate 4-in-1 ${category}!`);
+  if (has('UV') || /arkpro ultra/.test(lower)) add(`More Than a Flashlight – It's 4 Tools in One!`);
+  if (/flashlight|torch/.test(lower)) {
+    add(`One Flashlight, Four Powerful Lights!`);
+    add(`Brighten Every Adventure with ${brandModel}!`);
+    add(`The Pocket Flashlight Every Outdoor Lover Needs!`);
+    add(`Your Ultimate Camping & Emergency Flashlight!`);
+    add(`Small but Mighty! A Powerful EDC Flashlight!`);
+    add(`The Flashlight Built for Work, Camping & Emergencies!`);
+    add(`See More, Do More with This EDC Flashlight!`);
+  } else if (/sand art/.test(lower)) {
+    add(`This Tiny Sand Art Machine Is Pure Relaxation!`);
+    add(`Your Desk Needs This Mesmerizing Zen Gadget!`);
+    add(`I Could Watch This Moving Sand Art All Day!`);
+    add(`The Most Satisfying Desk Decor You'll Ever See!`);
+    add(`Turn Your Desk Into a Mini Zen Garden!`);
+    add(`Need to Relax? Just Watch the Sand Move!`);
+    add(`The Coolest Stress Relief Gadget for Your Desk!`);
+    add(`Watch This Little Machine Create Endless Art!`);
+    add(`Your New Favorite Way to Unwind After Work!`);
+    add(`This Kinetic Sand Art Is Desk Goals!`);
+    add(`Hundreds of Sand Patterns at Your Fingertips!`);
+    add(`Warning: You Won't Want to Stop Watching This!`);
+  } else {
+    add(`Meet Your New Favorite ${category}!`);
+    add(`The ${category} You Didn't Know You Needed!`);
+    add(`Small Details. A Big Everyday Difference!`);
+    add(`Make Every Day Better with ${brandModel}!`);
+    add(`The ${category} Worth a Closer Look!`);
+    add(`A Smarter Way to Enjoy ${category}!`);
+    add(`One ${category}, So Many Possibilities!`);
+    add(`This Might Be Your New Favorite Gadget!`);
+    add(`The Everyday Essential That Stands Out!`);
   }
-  const tags = [
-    `Everyday convenience, made more appealing.`,
-    `A thoughtful addition to your daily essentials.`,
-    `Practical design for the moments that matter.`,
-    `Make room for a better everyday experience.`,
-    `A useful choice for home, work and beyond.`,
-    `Bring a little more ease to your routine.`,
-    `Made to complement the way you live.`,
-    `An easy upgrade to your everyday setup.`,
-    `Useful features. More ways to enjoy it.`,
-    `Find a better fit for your daily needs.`
-  ];
-  const listingPool = [];
-  const add = s => { s=clean(s); if(s.length<=60 && !listingPool.includes(s)) listingPool.push(s); };
-  add(product);
-  for (const x of f) { add(`${product} ${x}`); add(`${product} with ${x}`); }
-  ['for Everyday Use','Portable Design','Practical Everyday Essential','for Home and Travel','Easy to Use'].forEach(x=>add(`${product} ${x}`));
-  return {promotionalHeadlines:promos,taglines:tags,listingTitles:listingPool.slice(0,10)};
+  if (feature && !titles.some(t=>t.toLowerCase().includes(feature.toLowerCase()))) add(`${feature} – All in One!`);
+  add(`Discover What Makes ${brandModel} Special!`);
+  add(`The ${brandModel} Everyone Will Want to See!`);
+  return { titles: titles.slice(0,15) };
 }
 async function optionalAI(product, research, count, limit) {
   if (process.env.ENABLE_AI !== 'true' || !process.env.OPENAI_API_KEY) return null;
-  const prompt = `Create marketing copy for product: ${product}. Research notes: ${JSON.stringify(research)}. Use only supported product facts; never invent specs, guarantees, awards, compatibility or performance claims. Return JSON only with exactly these arrays: {"promotionalHeadlines":[10 catchy persuasive benefit-led advertising headlines, not product-name variations],"taglines":[10 short supporting promotional taglines],"listingTitles":[10 SEO-friendly descriptive Amazon listing titles, each no more than ${limit} characters and with the product name near the beginning]}. Headlines should be memorable and natural; taglines should complement rather than repeat headlines. If research is thin, use safe lifestyle-oriented language and avoid asserting unverified features.`;
+  const prompt = `Create 15 catchy, persuasive promotional title options for this product: ${product}. Research notes: ${JSON.stringify(research)}. Match the style of punchy e-commerce hooks such as "One Flashlight, Four Powerful Lights!", "1700 Lumens of Power in Your Pocket!", and "This Tiny Sand Art Machine Is Pure Relaxation!". Return JSON only: {"titles":[15 options]}. Each item must be one standalone title, varied in structure and angle, exciting but natural. Use product-specific verified features and numbers where supported. Never invent specs, claims or capabilities. Do not create categories, descriptions, taglines or listing-title groups.`;
   const response = await fetch('https://api.openai.com/v1/responses', { method:'POST', headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'}, body:JSON.stringify({model:process.env.OPENAI_MODEL || 'gpt-4.1-mini',input:prompt}), signal:AbortSignal.timeout(25000) });
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error?.message || `AI service returned ${response.status}`);
   const textOut = data.output_text || (data.output || []).flatMap(x=>x.content || []).filter(x=>x.type==='output_text').map(x=>x.text).join('\n');
   const parsed = JSON.parse(textOut.replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim());
-  const cap = (arr,max) => [...new Set((Array.isArray(arr)?arr:[]).map(clean).filter(Boolean))].slice(0,max);
-  const listingTitles = cap(parsed.listingTitles,10).filter(t=>t.length<=limit);
-  const promotionalHeadlines = cap(parsed.promotionalHeadlines,10);
-  const taglines = cap(parsed.taglines,10);
-  return promotionalHeadlines.length && taglines.length && listingTitles.length
-    ? {promotionalHeadlines,taglines,listingTitles} : null;
+  const titles = [...new Set((Array.isArray(parsed.titles)?parsed.titles:[]).map(clean).filter(Boolean))].slice(0,15);
+  return titles.length ? {titles} : null;
 }
 exports.handler = async event => {
   if (event.httpMethod !== 'POST') return reply(405, { error:'Method Not Allowed' });
