@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="A free browser-based product research and marketing copy generator. Create catchy titles with a 60-character limit.">
+<meta name="description" content="A product research and marketing copy generator. Create catchy promotional titles up to 60 characters.">
 <meta name="theme-color" content="#101827">
 <title>Karl's Title Studio — Product Title Generator</title>
 <style>
@@ -38,10 +38,10 @@
     <section class="panel form-panel" aria-labelledby="form-title">
       <h2 id="form-title">✦ Build your titles</h2>
       <form id="generatorForm">
-        <div class="field"><label for="product">Product name</label><input id="product" maxlength="160" placeholder="e.g. Hohem iSteady X3 SE Plus" required autofocus><span class="hint">Just enter the product name or exact model. Research and title generation run automatically.</span></div>
+        <div class="field"><label for="product">Product name</label><input id="product" maxlength="500" placeholder="e.g. Hohem iSteady X3 SE Plus" required autofocus><span class="hint">Enter the full product name, exact model, or a longer product description (up to 500 characters).</span></div>
         <input id="category" type="hidden" value="Other"><input id="format" type="hidden" value="listing"><input id="style" type="hidden" value="catchy"><input id="count" type="hidden" value="10"><input id="limit" type="hidden" value="60">
         <button class="primary" id="generateBtn" type="submit">✦ Research & Generate Titles</button>
-        <p class="fineprint">Free web research runs first. Optional AI enhancement is disabled by default and only runs if explicitly enabled on your server.</p>
+        <p class="fineprint">AI researches the product and creates promotional title ideas. Every title is limited to 60 characters, including spaces and punctuation.</p>
       </form>
     </section>
     <section class="panel results" aria-live="polite">
@@ -60,18 +60,18 @@
  function copyText(text,msg){navigator.clipboard?.writeText(text).then(()=>{$('status').textContent=msg;}).catch(()=>{$('status').textContent='Copy unavailable in this browser.';});}
  function renderItems(targetId,items,label,limit){
   const root=$(targetId); root.innerHTML='';
-  (items||[]).forEach((value,i)=>{const text=clean(value);const card=document.createElement('article');card.className='item compact-item';const t=document.createElement('div');t.className='title';t.textContent=text;const btn=document.createElement('button');btn.className='copy compact-copy';btn.type='button';btn.setAttribute('aria-label',`Copy ${label.toLowerCase()} ${i+1}`);btn.textContent='Copy';btn.onclick=()=>copyText(text,`${label} ${i+1} copied.`);card.append(t,btn);root.append(card);});
+  (items||[]).forEach((value,i)=>{const text=clean(value);const card=document.createElement('article');card.className='item compact-item';const content=document.createElement('div');content.style.flex='1';const t=document.createElement('div');t.className='title';t.textContent=text;const count=document.createElement('div');count.className='count';count.textContent=`${Array.from(text).length}/60 characters`;content.append(t,count);const btn=document.createElement('button');btn.className='copy compact-copy';btn.type='button';btn.setAttribute('aria-label',`Copy ${label.toLowerCase()} ${i+1}`);btn.textContent='Copy';btn.onclick=()=>copyText(text,`${label} ${i+1} copied.`);card.append(content,btn);root.append(card);});
  }
  function render(data){
   const titles=data.titles||[];
   $('empty').classList.add('hidden'); $('resultActions').classList.remove('hidden');
-  $('resultMeta').textContent=`${titles.length} title ideas`;
+  $('resultMeta').textContent=`${titles.length} title ideas · maximum 60 characters each`;
   $('titlesGroup').classList.toggle('hidden',!titles.length);
   renderItems('titlesList',titles,'TITLE');
   lastTitles=titles;
  }
  async function generate(){const product=clean($('product').value);if(!product){$('product').focus();return;}const btn=$('generateBtn');btn.disabled=true;btn.textContent='AI researching & writing…';$('status').textContent='OpenAI is researching the product and creating promotional titles…';
-  try{const response=await fetch('/.netlify/functions/research-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product,count:15,limit:220,batch:batchNumber,batchSeed:`${batchNumber}-${Date.now()}`})});const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{throw new Error(`Research service returned an unreadable response (${response.status}).`);}if(!response.ok)throw new Error(data.error||`Research failed (${response.status}).`);if(!data.titles?.length)throw new Error('The research service returned no marketing copy. Check the Netlify Function deployment and try again.');render(data);$('status').textContent=data.searchAvailable?'AI research complete. Review the source links if needed.':'AI title generation complete. Verify product claims before publishing.';
+  try{const response=await fetch('/.netlify/functions/research-generate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product,count:15,limit:60,batch:batchNumber,batchSeed:`${batchNumber}-${Date.now()}`})});const raw=await response.text();let data;try{data=JSON.parse(raw);}catch{throw new Error(`Research service returned an unreadable response (${response.status}).`);}if(!response.ok)throw new Error(data.error||`Research failed (${response.status}).`);if(!data.titles?.length)throw new Error('The research service returned no marketing copy. Check the Netlify Function deployment and try again.');render(data);$('status').textContent=data.searchAvailable?'AI research complete. Review the source links if needed.':'AI title generation complete. Verify product claims before publishing.';
   }catch(e){$('status').textContent=`Unable to generate copy: ${e?.message||'Unexpected error.'}`;}finally{btn.disabled=false;btn.textContent='✦ Research & Generate Titles';}}
  $('generatorForm').addEventListener('submit',e=>{e.preventDefault();generate();}); $('regenerate').addEventListener('click',()=>{batchNumber++;generate();}); $('copyAll').addEventListener('click',()=>copyText(lastTitles.map((t,i)=>`${i+1}. ${t}`).join('\n'),'All titles copied.'));
 })();

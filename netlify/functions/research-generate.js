@@ -219,10 +219,10 @@ RESEARCH RULES
 - Do not confuse similarly named models or variants.
 
 WRITING RULES
-- Return exactly 15 promotional title ideas, one title per line in the JSON array.
+- Return exactly 15 promotional title ideas, one title per line in the JSON array. EVERY title must be 60 characters or fewer, counting spaces and punctuation.
 - Make the titles varied: feature-led, benefit-led, curiosity-led, use-case-led, gift-led when appropriate.
 - Sound natural, persuasive, specific and human. Avoid generic filler and repeated sentence structures.
-- Keep them concise and memorable. Exclamation marks are welcome but don't force one into every title.
+- Keep every title at 60 characters maximum. Count all letters, numbers, spaces, and punctuation. Never exceed 60 characters; do not add numbering or quotation marks. Exclamation marks are welcome but do not force one into every title.
 - Do not return SEO listing titles, taglines, descriptions, explanations, categories, or separate sections.
 - This is a fresh batch. Variation seed: ${batchSeed}. Explore different hooks and angles rather than reusing a predictable template.
 
@@ -267,7 +267,7 @@ Return valid JSON only, with this exact shape:
   }
   const titles = [...new Set((Array.isArray(parsed.titles) ? parsed.titles : [])
     .map(clean)
-    .filter(title => title && title.length <= 220))]
+    .filter(title => title && [...title].length <= 60))]
     .slice(0, 15);
   if (titles.length < 8) throw new Error('The AI returned too few usable titles. Please try again.');
   const sources = [];
@@ -289,7 +289,7 @@ exports.handler = async event => {
   let input;
   try { input = JSON.parse(event.body || '{}'); }
   catch { return reply(400, { error: 'Invalid request body.' }); }
-  const product = clean(input.product).slice(0, 160);
+  const product = clean(input.product).slice(0, 500);
   if (!product) return reply(400, { error: 'Enter a product name.' });
   const batchSeed = clean(input.batchSeed || input.batch || 'first batch').slice(0, 100);
   try {
