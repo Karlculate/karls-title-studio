@@ -88,25 +88,59 @@ function deriveFeatures(results, product) {
   const keyword = [...freq.entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,8);
   return { features: phrases.slice(0,10), keywords: keyword };
 }
-function localTitles(product, features, count, limit) {
-  const pool = [];
-  const add = s => { s = clean(s).replace(/[|•]/g, ' '); if (s.length <= limit && !pool.includes(s)) pool.push(s); };
+function localMarketing(product, features, keywords) {
+  const f = features.slice(0,3);
+  const feature = f[0] || '';
+  const promos = [
+    `Make Every ${keywords[0] || 'Moment'} Count`,
+    `Bring More Possibility to Every Day`,
+    `A Smarter Way to Enjoy ${product}`,
+    `Designed to Fit the Way You Live`,
+    `Make Your Everyday Routine Feel Easier`,
+    `Small Upgrade. Fresh Everyday Potential.`,
+    `Get More From the Things You Love`,
+    `A Practical Pick for Everyday Living`,
+    `Ready for Whatever the Day Brings`,
+    `Give Your Daily Routine a Better Feel`
+  ];
+  if (feature) {
+    promos[0] = `Enjoy More with ${feature}`;
+    promos[1] = `${feature} for the Way You Live`;
+    promos[2] = `Discover What ${feature} Can Do`;
+  }
+  const tags = [
+    `Everyday convenience, made more appealing.`,
+    `A thoughtful addition to your daily essentials.`,
+    `Practical design for the moments that matter.`,
+    `Make room for a better everyday experience.`,
+    `A useful choice for home, work and beyond.`,
+    `Bring a little more ease to your routine.`,
+    `Made to complement the way you live.`,
+    `An easy upgrade to your everyday setup.`,
+    `Useful features. More ways to enjoy it.`,
+    `Find a better fit for your daily needs.`
+  ];
+  const listingPool = [];
+  const add = s => { s=clean(s); if(s.length<=60 && !listingPool.includes(s)) listingPool.push(s); };
   add(product);
-  for (const f of features) { add(`${product} with ${f}`); add(`${product} ${f}`); }
-  const endings = ['for Everyday Use','Portable Everyday Essential','with Practical Design','for Home and Travel','Easy to Use Design','for Daily Use'];
-  endings.forEach(e => add(`${product} ${e}`));
-  return pool.slice(0,count);
+  for (const x of f) { add(`${product} ${x}`); add(`${product} with ${x}`); }
+  ['for Everyday Use','Portable Design','Practical Everyday Essential','for Home and Travel','Easy to Use'].forEach(x=>add(`${product} ${x}`));
+  return {promotionalHeadlines:promos,taglines:tags,listingTitles:listingPool.slice(0,10)};
 }
 async function optionalAI(product, research, count, limit) {
   if (process.env.ENABLE_AI !== 'true' || !process.env.OPENAI_API_KEY) return null;
-  const prompt = `Create ${count} Amazon product title drafts for: ${product}. Maximum ${limit} characters each. Use only these search snippets and extracted details; never invent claims. Search notes: ${JSON.stringify(research)}. Keep product name near the beginning. Return JSON only: {"titles":[...]}`;
+  const prompt = `Create marketing copy for product: ${product}. Research notes: ${JSON.stringify(research)}. Use only supported product facts; never invent specs, guarantees, awards, compatibility or performance claims. Return JSON only with exactly these arrays: {"promotionalHeadlines":[10 catchy persuasive benefit-led advertising headlines, not product-name variations],"taglines":[10 short supporting promotional taglines],"listingTitles":[10 SEO-friendly descriptive Amazon listing titles, each no more than ${limit} characters and with the product name near the beginning]}. Headlines should be memorable and natural; taglines should complement rather than repeat headlines. If research is thin, use safe lifestyle-oriented language and avoid asserting unverified features.`;
   const response = await fetch('https://api.openai.com/v1/responses', { method:'POST', headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'}, body:JSON.stringify({model:process.env.OPENAI_MODEL || 'gpt-4.1-mini',input:prompt}), signal:AbortSignal.timeout(25000) });
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error?.message || `AI service returned ${response.status}`);
   const textOut = data.output_text || (data.output || []).flatMap(x=>x.content || []).filter(x=>x.type==='output_text').map(x=>x.text).join('\n');
   const parsed = JSON.parse(textOut.replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim());
-  const titles = [...new Set((parsed.titles || []).map(clean).filter(t=>t && t.length<=limit))].slice(0,count);
-  return titles.length ? titles : null;
+  const cap = (arr,max) => [...new Set((Array.isArray(arr)?arr:[]).map(clean).filter(Boolean))].slice(0,max);
+  const listingTitles = cap(parsed.listingTitles,10).filter(t=>t.length<=limit);
+  const promotionalHeadlines = cap(parsed.promotionalHeadlines,10);
+  const taglines = cap(parsed.taglines,10);
+  return promotionalHeadlines.length && taglines.length && listingTitles.length
+    ? {promotionalHeadlines,taglines,listingTitles} : null;
 }
 exports.handler = async event => {
   if (event.httpMethod !== 'POST') return reply(405, { error:'Method Not Allowed' });
@@ -126,9 +160,9 @@ exports.handler = async event => {
     sources: results.map(({title,url})=>({title,url})), searchAvailable: results.length > 0,
     searchProvider: searched.provider, searchDiagnostics: searched.errors
   };
-  let titles = null, mode = 'free-search';
-  try { titles = await optionalAI(product,research,count,limit); if (titles) mode='optional-ai'; }
-  catch (e) { research.aiNote = `AI enhancement unavailable; used free title drafting instead (${e.message}).`; }
-  if (!titles) titles = localTitles(product,features,count,limit);
-  return reply(200,{productType:research.productType,summary:research.summary,features,keywords,titles,sources:research.sources,mode,aiNote:research.aiNote || '',searchAvailable:research.searchAvailable,searchProvider:research.searchProvider,searchDiagnostics:research.searchDiagnostics});
+  let marketing = null, mode = 'free-research + local marketing copy';
+  try { marketing = await optionalAI(product,research,count,limit); if (marketing) mode='optional-ai'; }
+  catch (e) { research.aiNote = `AI enhancement unavailable; used free copy drafting instead (${e.message}).`; }
+  if (!marketing) marketing = localMarketing(product,features,keywords);
+  return reply(200,{productType:research.productType,summary:research.summary,features,keywords,...marketing,sources:research.sources,mode,aiNote:research.aiNote || '',searchAvailable:research.searchAvailable,searchProvider:research.searchProvider,searchDiagnostics:research.searchDiagnostics});
 };

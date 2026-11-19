@@ -1,6 +1,13 @@
-# Karl's Title Studio
+# Karl's Title Studio — Marketing Copy Edition
 
-Deploy the entire `amazon-title-generator` folder as the Netlify site root. Keep `index.html`, `netlify.toml`, and `netlify/functions/research-generate.js` at the root-relative locations shown in the project.
+## What it generates from one product name
+- 10 promotional headlines (catchy, persuasive ad hooks)
+- 10 supporting taglines
+- Up to 10 SEO-friendly Amazon listing titles, each at most 60 characters
+- Public search result links and research notes
+
+## Netlify deployment
+Deploy the contents of this `amazon-title-generator` folder as the site root.
 
 Netlify build settings:
 - Base directory: blank
@@ -9,6 +16,10 @@ Netlify build settings:
 - Publish directory: `.`
 - Functions directory: `netlify/functions`
 
-The free research function tries DuckDuckGo HTML, DuckDuckGo Lite, and Bing HTML search in sequence. Search availability can vary by provider and network policy. The function only extracts candidate information from public result snippets; verify product specifications on source pages before using an Amazon listing.
+Keep `index.html`, `netlify.toml`, and `netlify/functions/research-generate.js` in these exact locations.
 
-Optional AI is disabled unless `ENABLE_AI=true` and `OPENAI_API_KEY` are configured. API usage may incur charges; only enable it if you have confirmed free promotional credits and no paid fallback.
+## Free mode and limitations
+The default path attempts public search providers from a Netlify Function, then drafts marketing copy locally. Public search providers can block or rate-limit automated requests. When research is sparse, local promotional lines are generic and must not be mistaken for verified product benefits. Always review the source links and confirm product claims.
+
+## Optional AI
+AI is disabled unless `ENABLE_AI=true` and `OPENAI_API_KEY` are configured in Netlify environment variables. API calls may incur charges; only enable after confirming a free promotional credit balance and no paid fallback.
