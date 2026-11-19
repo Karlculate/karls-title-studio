@@ -88,7 +88,7 @@ function deriveFeatures(results, product) {
   const keyword = [...freq.entries()].sort((a,b)=>b[1]-a[1]).map(x=>x[0]).slice(0,8);
   return { features: phrases.slice(0,10), keywords: keyword };
 }
-function localMarketing(product, features, keywords) {
+function localMarketing(product, features, keywords, count=10) {
   const f = features.map(clean);
   const lower = product.toLowerCase();
   const category = /flashlight|torch/.test(lower) ? 'Flashlight'
@@ -101,54 +101,96 @@ function localMarketing(product, features, keywords) {
     : /table/.test(lower) ? 'Table'
     : /comb|straightener/.test(lower) ? 'Styling Tool'
     : (product.split(/\s+/).slice(-1)[0] || 'Product').replace(/[^\w-]/g,'');
-  const brandModel = product;
   const feature = f.find(x => /\d/.test(x)) || f[0] || '';
-  const has = x => f.some(v=>v.toLowerCase().includes(x));
   const titles = [];
   const add = t => { t=clean(t).replace(/\s+([!?.])/g,'$1'); if(t && !titles.some(x=>x.toLowerCase()===t.toLowerCase())) titles.push(t); };
-  if (feature) add(`${feature} of Power in Your Pocket!`);
-  if (has('4-in-1') || /4-in-1/.test(lower)) add(`The Ultimate 4-in-1 ${category}!`);
-  if (has('UV') || /arkpro ultra/.test(lower)) add(`More Than a Flashlight – It's 4 Tools in One!`);
+  const shuffle = arr => {
+    const a=[...arr];
+    for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+    return a;
+  };
   if (/flashlight|torch/.test(lower)) {
-    add(`One Flashlight, Four Powerful Lights!`);
-    add(`Brighten Every Adventure with ${brandModel}!`);
-    add(`The Pocket Flashlight Every Outdoor Lover Needs!`);
-    add(`Your Ultimate Camping & Emergency Flashlight!`);
-    add(`Small but Mighty! A Powerful EDC Flashlight!`);
-    add(`The Flashlight Built for Work, Camping & Emergencies!`);
-    add(`See More, Do More with This EDC Flashlight!`);
+    [
+      'One Flashlight, Four Powerful Lights!',
+      'The Ultimate 4-in-1 EDC Flashlight!',
+      'More Than a Flashlight – It’s 4 Tools in One!',
+      `Brighten Every Adventure with ${product}!`,
+      'The Pocket Flashlight Every Outdoor Lover Needs!',
+      'Your Ultimate Camping & Emergency Flashlight!',
+      'Small but Mighty! A Powerful EDC Flashlight!',
+      'The Flashlight Built for Work, Camping & Emergencies!',
+      'See More, Do More with This EDC Flashlight!',
+      'One Pocket-Sized Light. So Many Possibilities!',
+      'Light Up Your Next Adventure!',
+      'Your Everyday Carry Just Got Brighter!',
+      'A Powerful Light for Whatever Comes Your Way!',
+      'Ready for the Trail, the Jobsite and the Unexpected!',
+      'Big Performance in a Pocket-Friendly Design!',
+      'The Compact Light That’s Ready for Anything!',
+      'Take Powerful Illumination Wherever You Go!',
+      'One Handy Light for Everyday Adventures!',
+      'Make Darkness Less of a Challenge!',
+      'Your Next Go-To Light for Work and Outdoors!'
+    ].forEach(add);
   } else if (/sand art/.test(lower)) {
-    add(`This Tiny Sand Art Machine Is Pure Relaxation!`);
-    add(`Your Desk Needs This Mesmerizing Zen Gadget!`);
-    add(`I Could Watch This Moving Sand Art All Day!`);
-    add(`The Most Satisfying Desk Decor You'll Ever See!`);
-    add(`Turn Your Desk Into a Mini Zen Garden!`);
-    add(`Need to Relax? Just Watch the Sand Move!`);
-    add(`The Coolest Stress Relief Gadget for Your Desk!`);
-    add(`Watch This Little Machine Create Endless Art!`);
-    add(`Your New Favorite Way to Unwind After Work!`);
-    add(`This Kinetic Sand Art Is Desk Goals!`);
-    add(`Hundreds of Sand Patterns at Your Fingertips!`);
-    add(`Warning: You Won't Want to Stop Watching This!`);
+    [
+      'This Tiny Sand Art Machine Is Pure Relaxation!',
+      'Your Desk Needs This Mesmerizing Zen Gadget!',
+      'I Could Watch This Moving Sand Art All Day!',
+      'The Most Satisfying Desk Decor You’ll Ever See!',
+      'Turn Your Desk Into a Mini Zen Garden!',
+      'This Smart Sand Art Table Is Seriously Addictive!',
+      'Need to Relax? Just Watch the Sand Move!',
+      'The Coolest Stress Relief Gadget for Your Desk!',
+      'Watch This Little Machine Create Endless Art!',
+      'This Is the Ultimate Gift for Anyone Who Needs Zen!',
+      'A Mini Masterpiece That Never Stops Mesmerizing!',
+      'Your New Favorite Way to Unwind After Work!',
+      'This Kinetic Sand Art Is Desk Goals!',
+      'Hundreds of Sand Patterns at Your Fingertips!',
+      'Warning: You Won’t Want to Stop Watching This!',
+      'Bring a Little Calm to Your Workspace!',
+      'A Mesmerizing Moment of Calm, Right on Your Desk!',
+      'Turn Idle Moments Into Something Beautiful!',
+      'The Desk Accessory You’ll Keep Watching!',
+      'Give Your Workspace a More Relaxing Vibe!'
+    ].forEach(add);
   } else {
-    add(`Meet Your New Favorite ${category}!`);
-    add(`The ${category} You Didn't Know You Needed!`);
-    add(`Small Details. A Big Everyday Difference!`);
-    add(`Make Every Day Better with ${brandModel}!`);
-    add(`The ${category} Worth a Closer Look!`);
-    add(`A Smarter Way to Enjoy ${category}!`);
-    add(`One ${category}, So Many Possibilities!`);
-    add(`This Might Be Your New Favorite Gadget!`);
-    add(`The Everyday Essential That Stands Out!`);
+    [
+      `Meet Your New Favorite ${category}!`,
+      `The ${category} You Didn’t Know You Needed!`,
+      'Small Details. A Big Everyday Difference!',
+      `Make Every Day Better with ${product}!`,
+      `The ${category} Worth a Closer Look!`,
+      `A Smarter Way to Enjoy Your ${category}!`,
+      `One ${category}, So Many Possibilities!`,
+      'This Might Be Your New Favorite Gadget!',
+      'The Everyday Essential That Stands Out!',
+      `Give Your Daily Routine a Fresh Upgrade!`,
+      `Discover a New Favorite with ${product}!`,
+      `The Handy ${category} You’ll Reach For Again and Again!`,
+      `A Clever Little Upgrade for Everyday Life!`,
+      `Make Room for Something More Useful!`,
+      `Your Next Everyday Essential Starts Here!`,
+      `A Practical Find You’ll Be Glad You Found!`,
+      `Bring More Convenience to Your Day!`,
+      `The ${category} That Makes You Look Twice!`,
+      `Everyday Function Meets Fresh Possibilities!`,
+      `Why Settle for Ordinary ${category}s?`
+    ].forEach(add);
   }
-  if (feature && !titles.some(t=>t.toLowerCase().includes(feature.toLowerCase()))) add(`${feature} – All in One!`);
-  add(`Discover What Makes ${brandModel} Special!`);
-  add(`The ${brandModel} Everyone Will Want to See!`);
-  return { titles: titles.slice(0,15) };
+  if (feature) {
+    add(`${feature} – All in One!`);
+    add(`Get More from ${feature}!`);
+    add(`Discover the Power of ${feature}!`);
+    add(`${feature} That Goes Wherever You Do!`);
+  }
+  // Return a genuinely different selection/order for each New batch request.
+  return { titles: shuffle(titles).slice(0, Math.max(1, Math.min(20, Number(count)||10))) };
 }
 async function optionalAI(product, research, count, limit) {
   if (process.env.ENABLE_AI !== 'true' || !process.env.OPENAI_API_KEY) return null;
-  const prompt = `Create 15 catchy, persuasive promotional title options for this product: ${product}. Research notes: ${JSON.stringify(research)}. Match the style of punchy e-commerce hooks such as "One Flashlight, Four Powerful Lights!", "1700 Lumens of Power in Your Pocket!", and "This Tiny Sand Art Machine Is Pure Relaxation!". Return JSON only: {"titles":[15 options]}. Each item must be one standalone title, varied in structure and angle, exciting but natural. Use product-specific verified features and numbers where supported. Never invent specs, claims or capabilities. Do not create categories, descriptions, taglines or listing-title groups.`;
+  const prompt = `Create 15 catchy, persuasive promotional title options for this product: ${product}. This is fresh batch number ${Number(research.batch)||0}; use a different mix of hooks and angles from a previous batch. Research notes: ${JSON.stringify(research)}. Match the style of punchy e-commerce hooks such as "One Flashlight, Four Powerful Lights!", "1700 Lumens of Power in Your Pocket!", and "This Tiny Sand Art Machine Is Pure Relaxation!". Return JSON only: {"titles":[15 options]}. Each item must be one standalone title, varied in structure and angle, exciting but natural. Use product-specific verified features and numbers where supported. Never invent specs, claims or capabilities. Do not create categories, descriptions, taglines or listing-title groups.`;
   const response = await fetch('https://api.openai.com/v1/responses', { method:'POST', headers:{Authorization:`Bearer ${process.env.OPENAI_API_KEY}`,'Content-Type':'application/json'}, body:JSON.stringify({model:process.env.OPENAI_MODEL || 'gpt-4.1-mini',input:prompt}), signal:AbortSignal.timeout(25000) });
   const data = await response.json();
   if (!response.ok) throw new Error(data?.error?.message || `AI service returned ${response.status}`);
@@ -171,13 +213,13 @@ exports.handler = async event => {
     summary: results.length
       ? `Found ${results.length} public search results via ${searched.provider} for “${product}”. Search snippets are preliminary evidence; confirm exact model and variant on linked pages.`
       : `Public search providers did not return usable results. ${searched.errors.join(' | ') || 'No matching results were parsed.'} No specifications have been verified.`,
-    productType: results[0]?.title || product, features, keywords,
+    productType: results[0]?.title || product, features, keywords, batch: Number(input.batch)||0,
     sources: results.map(({title,url})=>({title,url})), searchAvailable: results.length > 0,
     searchProvider: searched.provider, searchDiagnostics: searched.errors
   };
   let marketing = null, mode = 'free-research + local marketing copy';
   try { marketing = await optionalAI(product,research,count,limit); if (marketing) mode='optional-ai'; }
   catch (e) { research.aiNote = `AI enhancement unavailable; used free copy drafting instead (${e.message}).`; }
-  if (!marketing) marketing = localMarketing(product,features,keywords);
+  if (!marketing) marketing = localMarketing(product,features,keywords,count);
   return reply(200,{productType:research.productType,summary:research.summary,features,keywords,...marketing,sources:research.sources,mode,aiNote:research.aiNote || '',searchAvailable:research.searchAvailable,searchProvider:research.searchProvider,searchDiagnostics:research.searchDiagnostics});
 };
